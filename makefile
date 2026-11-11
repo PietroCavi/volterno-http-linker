@@ -8,6 +8,7 @@ OUTPUT_DIR := ./build
 SOURCE_FILES = $(SOURCE_DIR)/main.c
 SOURCE_FILES += $(SOURCE_DIR)/lexer/token.c
 SOURCE_FILES += $(SOURCE_DIR)/lexer/lexer.c
+SOURCE_FILES += $(SOURCE_DIR)/parser/parser.c
 SOURCE_FILES += $(SOURCE_DIR)/error_handling/error_handling.c
 
 CFLAGS += -O3
