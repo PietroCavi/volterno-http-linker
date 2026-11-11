@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "lexer/token.h"
+
 void parse(){
     printf("I'm parsing!\n");
 }
@@ -16,6 +18,10 @@ void file_error(char* error_msg, char* file){
 
 int main(int argc, char**argv){
     
+    token t = arrow_tok;
+    
+    printf("%s\n",t.string);
+
     for(int i=1;i<argc;i++){
         
         FILE* config_file = fopen(argv[i],"r");
@@ -30,4 +36,3 @@ int main(int argc, char**argv){
     }
 
 }
-

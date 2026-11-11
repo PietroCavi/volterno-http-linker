@@ -6,6 +6,7 @@ SOURCE_DIR := ./src
 OUTPUT_DIR := ./build
 
 SOURCE_FILES = $(SOURCE_DIR)/main.c
+SOURCE_FILES += $(SOURCE_DIR)/lexer/token.c
 
 CFLAGS += -O3
 CFLAGS += -Wall
