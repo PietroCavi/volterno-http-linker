@@ -61,6 +61,9 @@ token lex(){
                         append_al(read_string,'\0');
                         return (token){IDENTIFIER_TAG,read_string.items};
                     }
+                    
+                    ungetc(peek,br);
+                    peek = '-';
                 }
                 
                 append_al(read_string,peek);
