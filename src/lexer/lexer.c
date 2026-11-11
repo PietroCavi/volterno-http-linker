@@ -37,6 +37,7 @@ token lex(){
             if(peek != '>'){
                 error_at_line("Missing '>' to complete the arrow",line);
             }
+            peek = NEXT;
             return arrow_tok;
         case '@':
             while(peek != '\n' && peek != EOF){
@@ -50,13 +51,15 @@ token lex(){
             return eof_tok;
         default:
             char_al read_string = {0};            
-            while(peek != '@' && peek != ':' && peek != EOF){
+            while(peek != '@' && peek != ':' && peek != ' ' && peek != '\t' && peek != '\r' && peek != '\n' && peek != EOF){
                 
                 if(peek == '-'){
                     peek = NEXT;
                     if(peek == '>'){
                         ungetc(peek,br);
-                        return (token){IDENTIFIER_TAG,NULL};
+                        peek = '-';
+                        append_al(read_string,'\0');
+                        return (token){IDENTIFIER_TAG,read_string.items};
                     }
                 }
                 
@@ -67,19 +70,47 @@ token lex(){
             }
             
             append_al(read_string,'\0');
-            trim_to_size_al(read_string);
+            //trim_to_size_al(read_string);
 
-            if(streq(read_string.items,"base")){
+            if(streq(read_string.items,     "base")){
                 return base_tok;
             }
-            else if(streq(read_string.items,"")){
-            
+            else if(streq(read_string.items,"root")){
+                return root_tok;
+            }
+            else if(streq(read_string.items,"method")){
+                return method_tok;
+            }
+            else if(streq(read_string.items,"GET")){
+                return get_tok;
+            }
+            else if(streq(read_string.items,"POST")){
+                return post_tok;
+            }
+            else if(streq(read_string.items,"PUT")){
+                return put_tok;
+            }
+            else if(streq(read_string.items,"DELETE")){
+                return delete_tok;
+            }
+            else if(streq(read_string.items,"PATCH")){
+                return patch_tok;
+            }
+            else if(streq(read_string.items,"functions")){
+                return functions_tok;
+            }
+            else if(streq(read_string.items,"file")){
+                return file_tok;
+            }
+            else if(streq(read_string.items,"dir")){
+                return dir_tok;
             }
 
-            return (token){IDENTIFIER_TAG,NULL};
-    }
 
-    return eof_tok;    
+            return (token){IDENTIFIER_TAG,read_string.items};
+    }
+    
+    generic_error("Something went wrong with the lexer... :c");
 }
 
 #undef NEXT

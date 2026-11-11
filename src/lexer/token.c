@@ -15,10 +15,14 @@ const token dir_tok        = {DIR_TAG,       "dir"      };
 const token arrow_tok      = {ARROW_TAG,     "->"       };
 const token comment_tok    = {COMMENT_TAG,   "@"        };
 const token semicolon_tok  = {SEMICOLON_TAG, ":"        };
-const token eof_tok        = {EOF_TAG,       NULL       };
+const token eof_tok        = {EOF_TAG,       "EOF"      }; 
 
 inline void free_tok(token t){
     if(t.string != NULL){
         free(t.string);
     }
+}
+
+void print_tok(token t){
+    printf("<%s,%d>\n",t.string == NULL ? "null" : t.string,t.tag);
 }

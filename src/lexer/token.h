@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+
 typedef enum{
 
     BASE_TAG,
@@ -44,3 +46,5 @@ extern const token semicolon_tok;
 extern const token eof_tok;
 
 void free_tok(token t);
+
+void print_tok(token t);

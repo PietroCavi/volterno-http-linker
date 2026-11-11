@@ -11,10 +11,8 @@ void parse(){
 }
 
 int main(int argc, char**argv){
-    
-    token t={0,"ciao"};
-    
-    printf("%s\n",t.string);
+   
+    token t = {0,"ciao"};
 
     for(int i=1;i<argc;i++){
         
@@ -28,11 +26,17 @@ int main(int argc, char**argv){
         
         while(t.tag != EOF_TAG){
             t = lex();
+            print_tok(t);
+
+            if(t.tag == IDENTIFIER_TAG){
+                free_tok(t);
+            }
         }
 
         parse();
         
         fclose(config_file);
     }
-
+    
+    printf("Parsed lines: %llu\n",line);
 }

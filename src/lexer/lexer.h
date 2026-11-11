@@ -6,6 +6,8 @@
 
 #include "../error_handling/error_handling.h"
 
+extern long long unsigned line;
+
 void setup_lexer(FILE* file);
 
 token lex();
