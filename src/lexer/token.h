@@ -16,7 +16,9 @@ typedef enum{
     ARROW_TAG,
     COMMENT_TAG,
     SEMICOLON_TAG,
-    IDENTIFIER_TAG
+    IDENTIFIER_TAG,
+
+    EOF_TAG
 
 }token_tag;
 
@@ -39,5 +41,6 @@ extern const token dir_tok;
 extern const token arrow_tok;
 extern const token comment_tok;
 extern const token semicolon_tok;
+extern const token eof_tok;
 
 void free_tok(token t);

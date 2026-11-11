@@ -15,6 +15,7 @@ const token dir_tok        = {DIR_TAG,       "dir"      };
 const token arrow_tok      = {ARROW_TAG,     "->"       };
 const token comment_tok    = {COMMENT_TAG,   "@"        };
 const token semicolon_tok  = {SEMICOLON_TAG, ":"        };
+const token eof_tok        = {EOF_TAG,       NULL       };
 
 inline void free_tok(token t){
     if(t.string != NULL){
