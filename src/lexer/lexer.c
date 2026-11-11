@@ -48,6 +48,7 @@ token lex(){
             peek = NEXT;
             return semicolon_tok;
         case EOF:
+            br = NULL;
             return eof_tok;
         default:
             char_al read_string = {0};            
