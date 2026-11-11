@@ -2,23 +2,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "error_handling/error_handling.h"
 #include "lexer/token.h"
+#include "lexer/lexer.h"
 
 void parse(){
     printf("I'm parsing!\n");
 }
 
-void file_error(char* error_msg, char* file){
-
-    fprintf(stderr,"%s %s\n",error_msg,file);
-
-    exit(EXIT_FAILURE);
-
-}
-
 int main(int argc, char**argv){
     
-    token t = arrow_tok;
+    token t={0,"ciao"};
     
     printf("%s\n",t.string);
 
@@ -27,7 +21,13 @@ int main(int argc, char**argv){
         FILE* config_file = fopen(argv[i],"r");
 
         if(config_file == NULL){
-            file_error("Failed to open config file:",argv[i]);
+            file_error("Failed to open config file",argv[i]);
+        }
+        
+        setup_lexer(config_file);
+        
+        while(t.tag != EOF_TAG){
+            t = lex();
         }
 
         parse();

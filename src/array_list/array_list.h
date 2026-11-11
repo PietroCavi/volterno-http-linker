@@ -1,0 +1,134 @@
+#ifndef __ARRAY_LIST_CAVI__
+#define __ARRAY_LIST_CAVI__
+
+#include <stdlib.h>
+#include <string.h>
+
+//--- basic integer types ---//
+
+typedef struct{
+
+    char* items;
+    size_t size;
+    size_t capacity;
+
+}char_al;
+
+typedef struct{
+
+    short* items;
+    size_t size;
+    size_t capacity;
+
+}short_al;
+
+typedef struct{
+
+    int* items;
+    size_t size;
+    size_t capacity;
+
+}int_al;
+
+typedef struct{
+
+    long* items;
+    size_t size;
+    size_t capacity;
+
+}long_al;
+
+//--- basic float types ---//
+
+typedef struct{
+
+    float* items;
+    size_t size;
+    size_t capacity;
+
+}float_al;
+
+typedef struct{
+
+    double* items;
+    size_t size;
+    size_t capacity;
+
+}double_al;
+
+//--- functions ---//
+
+#define append_al(list,element) \
+    do{ \
+        if(list.size >= list.capacity){ \
+            if(list.capacity == 0) \
+                list.capacity = 256; \
+            else \
+                list.capacity *= 2; \
+            list.items = realloc(list.items,list.capacity*sizeof(*list.items)); \
+        } \
+        list.items[list.size++] = element; \
+    }while(0);
+
+#define append_all_al(list_dst,list_src) \
+    do{ \
+        for(size_t i=0;i<list_src.size;i++){ \
+            append_al(list_dst,list_src.items[i]); \
+        } \
+    }while(0);
+
+#define remove_last_al(list) \
+    list.size--;
+
+#define add_al(list,index,element) \
+    do{\
+        if(list.size >= list.capacity){ \
+            if(list.capacity == 0) \
+                list.capacity = 256; \
+            else \
+                list.capacity *= 2; \
+            list.items = realloc(list.items,list.capacity*sizeof(*list.items)); \
+        } \
+        list.size++; \
+        for(size_t i=list.size-1;i>index;i--) \
+            list.items[i] = list.items[i-1]; \
+        list.items[index] = element; \
+    }while(0);
+
+#define remove_al(list,index) \
+    do{ \
+        if(list.size >= list.capacity){ \
+            if(list.capacity == 0) \
+                list.capacity = 256; \
+            else \
+                list.capacity *= 2; \
+            list.items = realloc(list.items,list.capacity*sizeof(*list.items)); \
+        } \
+        for(size_t i=index;i<list.size-1;i++) \
+            list.items[i] = list.items[i+1]; \
+        list.size--; \
+    }while(0);
+
+#define set_al(list,index,element) \
+    list.items[index] = element;
+
+#define trim_to_size_al(list) \
+    do{ \
+        list.items = realloc(list.items,list.size*sizeof(*list.items)); \
+        list.capacity = list.size; \
+    }while(0);
+
+#define clean_al(list) \
+    do{ \
+        list.size = 0; \
+    }while(0);
+
+#define free_al(list) \
+    do{ \
+        if(list.items!=NULL){ \
+            free(list.items); \
+            list.items = NULL; \
+        } \
+    }while(0);
+
+#endif

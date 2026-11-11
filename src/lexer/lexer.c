@@ -1,14 +1,86 @@
 #include "lexer.h"
 
-char peek;
-long long unsigned line;
-FILE* br;
+#define NEXT (char)fgetc(br)
+#define streq(A,B) strcmp(A,B) == 0
 
-int setup_lexer(FILE*file){
-    return file == NULL ? 0 : 1;
+long long unsigned line;
+
+char peek;
+FILE* br = NULL;
+
+void setup_lexer(FILE*file){
+    if(file == NULL){
+        generic_error("Parser failed to setup, the passed file was NULL");
+    }
+
+    br = file;
+    peek = NEXT;
+    line = 0;
 }
 
 token lex(){
+    
+    if(br == NULL){
+        generic_error("Parser was not setupped correctly");
+    }
+
+	while(peek == ' ' || peek == '\t' || peek == '\r' || peek == '\n'){
+		if(peek == '\n'){
+            line++;
+        }
+        peek = NEXT;
+	}
+
+    switch(peek){
+        case '-':
+            peek = NEXT;
+            if(peek != '>'){
+                error_at_line("Missing '>' to complete the arrow",line);
+            }
+            return arrow_tok;
+        case '@':
+            while(peek != '\n' && peek != EOF){
+                peek = NEXT;
+            }
+            return comment_tok;
+        case ':':
+            peek = NEXT;
+            return semicolon_tok;
+        case EOF:
+            return eof_tok;
+        default:
+            char_al read_string = {0};            
+            while(peek != '@' && peek != ':' && peek != EOF){
+                
+                if(peek == '-'){
+                    peek = NEXT;
+                    if(peek == '>'){
+                        ungetc(peek,br);
+                        return (token){IDENTIFIER_TAG,NULL};
+                    }
+                }
+                
+                append_al(read_string,peek);
+
+                peek = NEXT;
+            
+            }
+            
+            append_al(read_string,'\0');
+            trim_to_size_al(read_string);
+
+            if(streq(read_string.items,"base")){
+                return base_tok;
+            }
+            else if(streq(read_string.items,"")){
+            
+            }
+
+            return (token){IDENTIFIER_TAG,NULL};
+    }
+
     return eof_tok;    
 }
 
+#undef NEXT
+#undef streq
