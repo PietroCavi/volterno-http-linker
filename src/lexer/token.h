@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __TOKEN_CAVI__
+#define __TOKEN_CAVI__
 
 #include <stdio.h>
 
@@ -48,3 +49,5 @@ extern const token eof_tok;
 void free_tok(token t);
 
 void print_tok(token t);
+
+#endif
