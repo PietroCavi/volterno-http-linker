@@ -16,7 +16,7 @@ int main(int argc, char**argv){
             file_error("Failed to open config file",argv[i]);
         }
         
-        setup_parser(config_file);
+        setup_lexer(config_file);
         parse();
        
         fclose(config_file);

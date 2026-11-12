@@ -1,0 +1,37 @@
+
+
+
+
+
+fileexpr
+[file] => [:] => [ID] => ?[->] => [ID] 
+
+direxpr
+[dir]  => [:] => [ID] => ?[->] => [ID] 
+
+methodexpr
+[method] => [:] => [GET | PUT | DELETE | POST | PATCH]
+
+functionsexpr
+[functions] => [:] => [ID]
+
+commentexpr
+[@]
+
+rootexpr
+[root] => [:] => [ID]
+
+baseexpr
+[base] => [:] => [ID]
+
+
+when parsing a fileexpr or a direxpr some conditions must be met:
+    a root was specified
+    a method was specified
+    if a function is required, a functions file was specified
+
+baseexpr, functionsexpr, methodexpr, rootexpr and commentexpr can occur
+at any time, except from commentexpr some global variables will be changed
+as a side-effect
+
+

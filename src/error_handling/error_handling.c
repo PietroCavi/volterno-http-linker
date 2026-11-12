@@ -23,3 +23,11 @@ void error_at_line(char* error_msg, long long unsigned line){
     exit(EXIT_FAILURE);
 
 }
+
+void error_at_line_tok(char* error_msg, long long unsigned line, token tok){
+    
+    fprintf(stderr,"%s :: at line %llu :: token -> <%s,%d>\n",error_msg,line,tok.string,tok.tag);
+    
+    exit(EXIT_FAILURE);
+
+}

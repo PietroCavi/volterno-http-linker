@@ -2,7 +2,7 @@ base: example/index.html
 
 root: example
 
-method: GET
+method:GET
 
 file: script.js
 file: style.css
