@@ -16,11 +16,18 @@ int main(int argc, char**argv){
             file_error("Failed to open config file",argv[i]);
         }
         
-        setup_lexer(config_file);
+        printf("Parsing [%s]\n",argv[i]);
+
+        setup_parser(config_file);
         parse();
-       
+
         fclose(config_file);
+        
+        printf("Success - parsed lines: %llu\n",lexer_line);
+    }
+
+    if(!parser_base){
+        generic_error("<base> was not specified");
     }
     
-    printf("Parsed lines: %llu\n",line);
 }

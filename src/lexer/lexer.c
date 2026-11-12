@@ -3,7 +3,7 @@
 #define NEXT (char)fgetc(br)
 #define streq(A,B) strcmp(A,B) == 0
 
-long long unsigned line;
+long long unsigned lexer_line;
 
 char peek;
 FILE* br = NULL;
@@ -15,7 +15,7 @@ void setup_lexer(FILE*file){
 
     br = file;
     peek = NEXT;
-    line = 0;
+    lexer_line = 1;
 }
 
 token lex(){
@@ -26,7 +26,7 @@ token lex(){
 
 	while(peek == ' ' || peek == '\t' || peek == '\r' || peek == '\n'){
 		if(peek == '\n'){
-            line++;
+            lexer_line++;
         }
         peek = NEXT;
 	}
@@ -35,7 +35,7 @@ token lex(){
         case '-':
             peek = NEXT;
             if(peek != '>'){
-                error_at_line("Missing '>' to complete the arrow",line);
+                error_at_line("Missing '>' to complete the arrow",lexer_line);
             }
             peek = NEXT;
             return arrow_tok;
@@ -49,6 +49,7 @@ token lex(){
             return semicolon_tok;
         case EOF:
             br = NULL;
+            lexer_line--;
             return eof_tok;
         default:
             char_al read_string = {0};            

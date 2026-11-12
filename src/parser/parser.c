@@ -1,9 +1,9 @@
 #include "parser.h"
 
-unsigned char method = 0;
-unsigned char root = 0;
-unsigned char functions = 0;
-unsigned char base = 0;
+unsigned char parser_method = 0;
+unsigned char parser_root = 0;
+unsigned char parser_functions = 0;
+unsigned char parser_base = 0;
     
 token current_tok = {0,NULL};
 
@@ -13,6 +13,14 @@ void methodexpr();
 void functionsexpr();
 void fileexpr();
 void direxpr();
+
+void setup_parser(FILE* file){
+    setup_lexer(file);
+    parser_method = 0;
+    parser_root = 0;
+    parser_functions = 0;
+    parser_base = 0;
+}
 
 void parse(){
     
@@ -47,7 +55,7 @@ void parse(){
             current_tok = (token){0,NULL};
             break;
         default:
-            error_at_line_tok("Unexpected token",line,current_tok);
+            error_at_line_tok("Unexpected token",lexer_line,current_tok);
             break;
     }
 }
@@ -56,18 +64,18 @@ void baseexpr(){
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <base>",line);
+        error_at_line("Expected <:> after <base>",lexer_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != IDENTIFIER_TAG){
-        error_at_line("Expected path for <base>",line);
+        error_at_line("Expected path for <base>",lexer_line);
     }
 
     free_tok(current_tok);
     
-    base = 1;
+    parser_base = 1;
     
     current_tok = lex();
     parse();
@@ -77,18 +85,18 @@ void rootexpr(){
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <root>",line);
+        error_at_line("Expected <:> after <root>",lexer_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != IDENTIFIER_TAG){
-        error_at_line("Expected path for <root>",line);
+        error_at_line("Expected path for <root>",lexer_line);
     }
 
     free_tok(current_tok);
     
-    root = 1;
+    parser_root = 1;
     
     current_tok = lex();
     parse();
@@ -98,7 +106,7 @@ void methodexpr(){
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <method>",line);
+        error_at_line("Expected <:> after <method>",lexer_line);
     }
 
     current_tok = lex();
@@ -110,11 +118,11 @@ void methodexpr(){
         case PUT_TAG: break;
         case PATCH_TAG: break;
         default:
-            error_at_line_tok("Not a valid method (GET,POST,DELETE,PUT,PATCH)",line,current_tok);
+            error_at_line_tok("Not a valid method (GET,POST,DELETE,PUT,PATCH)",lexer_line,current_tok);
             break;
     }
 
-    method = 1;
+    parser_method = 1;
 
     current_tok = lex();
     parse();
@@ -124,18 +132,18 @@ void functionsexpr(){
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <functions>",line);
+        error_at_line("Expected <:> after <functions>",lexer_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != IDENTIFIER_TAG){
-        error_at_line("Expected path for <functions>",line);
+        error_at_line("Expected path for <functions>",lexer_line);
     }
 
     free_tok(current_tok);
     
-    functions = 1;
+    parser_functions = 1;
 
     current_tok = lex();
     parse();
@@ -143,24 +151,24 @@ void functionsexpr(){
 
 void fileexpr(){
     
-    if(!root){
-        error_at_line("No <root> was set for <file>",line);
+    if(!parser_root){
+        error_at_line("No <root> was set for <file>",lexer_line);
     }
 
-    if(!method){
-        error_at_line("No <method> was set for <file>",line);
+    if(!parser_method){
+        error_at_line("No <method> was set for <file>",lexer_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <file>",line);
+        error_at_line("Expected <:> after <file>",lexer_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != IDENTIFIER_TAG){
-        error_at_line("Expected path for <file>",line);
+        error_at_line("Expected path for <file>",lexer_line);
     }
     
     free_tok(current_tok);
@@ -168,13 +176,13 @@ void fileexpr(){
     current_tok = lex();
 
     if(current_tok.tag == ARROW_TAG){
-        if(!functions){
-            error_at_line("No <functions> was set for <file>",line);
+        if(!parser_functions){
+            error_at_line("No <functions> was set for <file>",lexer_line);
         }
 
         current_tok = lex();
         if(current_tok.tag != IDENTIFIER_TAG){
-            error_at_line("Expected function name for <file>",line);
+            error_at_line("Expected function name for <file>",lexer_line);
         }
 
         free_tok(current_tok);
@@ -186,24 +194,24 @@ void fileexpr(){
 }
 
 void direxpr(){
-    if(!root){
-        error_at_line("No <root> was set for <dir>",line);
+    if(!parser_root){
+        error_at_line("No <root> was set for <dir>",lexer_line);
     }
 
-    if(!method){
-        error_at_line("No <method> was set for <dir>",line);
+    if(!parser_method){
+        error_at_line("No <method> was set for <dir>",lexer_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <dir>",line);
+        error_at_line("Expected <:> after <dir>",lexer_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != IDENTIFIER_TAG){
-        error_at_line("Expected path for <dir>",line);
+        error_at_line("Expected path for <dir>",lexer_line);
     }
     
     free_tok(current_tok);
@@ -211,13 +219,13 @@ void direxpr(){
     current_tok = lex();
 
     if(current_tok.tag == ARROW_TAG){
-        if(!functions){
-            error_at_line("No <functions> was set for <dir>",line);
+        if(!parser_functions){
+            error_at_line("No <functions> was set for <dir>",lexer_line);
         }
 
         current_tok = lex();
         if(current_tok.tag != IDENTIFIER_TAG){
-            error_at_line("Expected function name for <dir>",line);
+            error_at_line("Expected function name for <dir>",lexer_line);
         }
 
         free_tok(current_tok);

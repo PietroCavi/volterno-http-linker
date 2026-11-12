@@ -2,7 +2,7 @@
 
 void file_error(char* error_msg, char* file_name){
 
-    fprintf(stderr,"%s: %s\n",error_msg,file_name);
+    fprintf(stderr,"ERROR: %s: %s\n",error_msg,file_name);
 
     exit(EXIT_FAILURE);
 
@@ -10,7 +10,7 @@ void file_error(char* error_msg, char* file_name){
 
 void generic_error(char* error_msg){
 
-    fprintf(stderr,"%s\n",error_msg);
+    fprintf(stderr,"ERROR: %s\n",error_msg);
 
     exit(EXIT_FAILURE);
 
@@ -18,7 +18,7 @@ void generic_error(char* error_msg){
 
 void error_at_line(char* error_msg, long long unsigned line){
 
-    fprintf(stderr,"%s :: at line %llu\n",error_msg,line);
+    fprintf(stderr,"ERROR: %s :: at line %llu\n",error_msg,line);
 
     exit(EXIT_FAILURE);
 
@@ -26,7 +26,7 @@ void error_at_line(char* error_msg, long long unsigned line){
 
 void error_at_line_tok(char* error_msg, long long unsigned line, token tok){
     
-    fprintf(stderr,"%s :: at line %llu :: token -> <%s,%d>\n",error_msg,line,tok.string,tok.tag);
+    fprintf(stderr,"ERROR: %s :: at line %llu :: token -> <%s,%d>\n",error_msg,line,tok.string,tok.tag);
     
     exit(EXIT_FAILURE);
 

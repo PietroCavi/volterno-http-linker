@@ -6,7 +6,7 @@
 
 #include "../error_handling/error_handling.h"
 
-extern long long unsigned line;
+extern long long unsigned lexer_line;
 
 void setup_lexer(FILE* file);
 
