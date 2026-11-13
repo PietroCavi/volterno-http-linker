@@ -52,7 +52,7 @@ token lex(){
             lexer_line--;
             return eof_tok;
         default:
-            {}
+            ; // do not touch this semicolon, otherwise clang won't compile (gcc is fine without it)
             char_al read_string = {0};            
             while(peek != '@' && peek != ':' && peek != ' ' && peek != '\t' && peek != '\r' && peek != '\n' && peek != EOF){
                 
