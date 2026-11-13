@@ -1,7 +1,7 @@
 #include "lexer.h"
 
 #define NEXT (char)fgetc(br)
-#define streq(A,B) strcmp(A,B) == 0
+#define streq(A,B) (strcmp(A,B) == 0)
 
 long long unsigned lexer_line;
 
@@ -52,6 +52,7 @@ token lex(){
             lexer_line--;
             return eof_tok;
         default:
+            {}
             char_al read_string = {0};            
             while(peek != '@' && peek != ':' && peek != ' ' && peek != '\t' && peek != '\r' && peek != '\n' && peek != EOF){
                 
