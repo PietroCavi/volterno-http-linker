@@ -2,7 +2,6 @@
 
 http_method parser_method = NOT_DEFINED;
 unsigned char parser_root = 0;
-// unsigned char parser_functions = 0;
 unsigned char parser_base = 0;
     
 token current_tok = {0,NULL};
@@ -10,7 +9,6 @@ token current_tok = {0,NULL};
 void baseexpr();
 void rootexpr();
 void methodexpr();
-// void functionsexpr();
 void fileexpr();
 void direxpr();
 
@@ -20,7 +18,6 @@ void setup_parser(FILE* file){
     setup_lexer(file);
     parser_method = 0;
     parser_root = 0;
-    // parser_functions = 0;
     parser_base = 0;
 }
 
@@ -40,9 +37,6 @@ void parse(){
         case METHOD_TAG:
             methodexpr();
             break;
-        // case FUNCTIONS_TAG:
-        //     functionsexpr();
-        //     break;
         case FILE_TAG:
             fileexpr();
             break;
@@ -64,7 +58,9 @@ void parse(){
 
 void baseexpr(){
     
-    free_http_resource(base);
+    if(base.path != NULL){
+        error_at_line("<base> has already been defined",lexer_line);
+    }
 
     current_tok = lex();
 
@@ -79,18 +75,12 @@ void baseexpr(){
     }
     
     base.path = current_tok.string;
-
-    // free_tok(current_tok);
     
     parser_base = 1;
     
     current_tok = lex();
 
     if(current_tok.tag == ARROW_TAG){
-        // if(!parser_functions){
-        //     error_at_line("No <functions> was set for <base>",lexer_line);
-        // }
-
         current_tok = lex();
         if(current_tok.tag != IDENTIFIER_TAG){
             error_at_line("Expected function name for <base>",lexer_line);
@@ -98,7 +88,6 @@ void baseexpr(){
         
         base.function_name = current_tok.string;
 
-        // free_tok(current_tok);
         current_tok = lex();
     }
     
@@ -124,8 +113,6 @@ void rootexpr(){
     }
 
     current_root = current_tok.string;
-
-    //free_tok(current_tok);
     
     parser_root = 1;
     
@@ -167,27 +154,6 @@ void methodexpr(){
     parse();
 }
 
-// void functionsexpr(){
-//     current_tok = lex();
-// 
-//     if(current_tok.tag != SEMICOLON_TAG){
-//         error_at_line("Expected <:> after <functions>",lexer_line);
-//     }
-// 
-//     current_tok = lex();
-// 
-//     if(current_tok.tag != IDENTIFIER_TAG){
-//         error_at_line("Expected path for <functions>",lexer_line);
-//     }
-// 
-//     free_tok(current_tok);
-//     
-//     parser_functions = 1;
-// 
-//     current_tok = lex();
-//     parse();
-// }
-
 static void insert_resource(http_resource resource){
     switch(parser_method){
         case GET:
@@ -195,7 +161,7 @@ static void insert_resource(http_resource resource){
                 append_al(get_resources,resource); 
             }
             else{
-                error_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",lexer_line,resource);
             }
             break;
         case POST:
@@ -203,7 +169,7 @@ static void insert_resource(http_resource resource){
                 append_al(post_resources,resource); 
             }
             else{
-                error_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",lexer_line,resource);
             }
             break;
         case DELETE:
@@ -211,7 +177,7 @@ static void insert_resource(http_resource resource){
                 append_al(delete_resources,resource); 
             }
             else{
-                error_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",lexer_line,resource);
             }
             break;
         case PUT:
@@ -219,7 +185,7 @@ static void insert_resource(http_resource resource){
                 append_al(put_resources,resource); 
             }
             else{
-                error_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",lexer_line,resource);
             }
             break;
         case PATCH:
@@ -227,7 +193,7 @@ static void insert_resource(http_resource resource){
                 append_al(patch_resources,resource); 
             }
             else{
-                error_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",lexer_line,resource);
             }
             break;
         default:
@@ -236,22 +202,25 @@ static void insert_resource(http_resource resource){
     }
 }
 
+// TODO: check if file exists
 void fileexpr(){
 
     http_resource file_resource = {0};
 
     if(!parser_root){error_at_line("No <root> was set for <file>",lexer_line);}
     if(parser_method == NOT_DEFINED){error_at_line("No <method> was set for <file>",lexer_line);}
-
     current_tok = lex();
-
     if(current_tok.tag != SEMICOLON_TAG){error_at_line("Expected <:> after <file>",lexer_line);}
-
     current_tok = lex();
-
     if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected path for <file>",lexer_line);}
-    
-    file_resource.path = current_tok.string;
+   
+    // +10 just to be sure, man...
+    char* full_path = calloc(strlen(current_tok.string)+strlen(current_root)+10,sizeof(char));
+    strcat(full_path,current_root);
+    strcat(full_path,"/");
+    strcat(full_path,current_tok.string);
+    free_tok(current_tok);
+    file_resource.path = full_path;
 
     current_tok = lex();
     if(current_tok.tag == ARROW_TAG){
@@ -268,7 +237,7 @@ void fileexpr(){
     parse();
 }
 
-// TODO: exapand dirs into files before translating ?? or I can leave it to the server to handle ??
+// TODO: exapand dirs into files before translating, and check if it exists
 void direxpr(){
     
     http_resource dir_resource = {0};
@@ -281,7 +250,13 @@ void direxpr(){
     current_tok = lex();
     if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected path for <dir>",lexer_line);}
     
-    dir_resource.path = current_tok.string;
+    // +10 just to be sure, man...
+    char* full_path = calloc(strlen(current_tok.string)+strlen(current_root)+10,sizeof(char));
+    strcat(full_path,current_root);
+    strcat(full_path,"/");
+    strcat(full_path,current_tok.string);
+    free_tok(current_tok);
+    dir_resource.path = full_path;
     
     current_tok = lex();
     if(current_tok.tag == ARROW_TAG){

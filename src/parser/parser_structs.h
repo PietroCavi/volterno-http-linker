@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
+// TODO: once dirs will be expanded in the parser the dir field will be optional, thus removed
 typedef struct{
 
     char* path;

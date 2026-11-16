@@ -7,7 +7,7 @@
 
 int main(int argc, char**argv){
    
-
+    
     for(int i=1;i<argc;i++){
         
         FILE* config_file = fopen(argv[i],"r");
@@ -23,7 +23,7 @@ int main(int argc, char**argv){
 
         fclose(config_file);
         
-        printf("Success - parsed lines: %llu\n",lexer_line);
+        printf("\033[92mSUCCESS\033[0m - parsed lines: %llu\n",lexer_line);
     }
 
     if(!parser_base){

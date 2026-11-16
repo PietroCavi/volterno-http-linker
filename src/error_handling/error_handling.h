@@ -15,6 +15,6 @@ void error_at_line(char* error_msg, long long unsigned line);
 
 void error_at_line_tok(char* error_msg, long long unsigned line, token tok);
                 
-void error_at_line_resource(char* error_msg,long long unsigned line,http_resource resource);
+void warning_at_line_resource(char* error_msg,long long unsigned line,http_resource resource);
 
 #endif
