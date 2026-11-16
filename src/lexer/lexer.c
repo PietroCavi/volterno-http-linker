@@ -102,9 +102,9 @@ token lex(){
             else if(streq(read_string.items,"PATCH")){
                 return patch_tok;
             }
-            else if(streq(read_string.items,"functions")){
-                return functions_tok;
-            }
+            // else if(streq(read_string.items,"functions")){
+            //     return functions_tok;
+            // }
             else if(streq(read_string.items,"file")){
                 return file_tok;
             }

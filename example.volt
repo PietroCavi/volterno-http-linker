@@ -17,9 +17,9 @@ dir: conway+
 
 method: POST
 
-functions: file.c
-
 dir: worms -> worms_post
-dir: worms-> worms_post
-dir: worms ->worms_post
-dir: worms->worms_post
+dir: worms0 -> worms_post
+dir: worms1 -> worms_post
+dir: worms2 -> worms_post
+
+file: sas

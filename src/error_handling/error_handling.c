@@ -31,3 +31,11 @@ void error_at_line_tok(char* error_msg, long long unsigned line, token tok){
     exit(EXIT_FAILURE);
 
 }
+
+void error_at_line_resource(char* error_msg,long long unsigned line,http_resource resource){
+    
+    fprintf(stderr,"ERROR: %s :: at line %llu\n",error_msg,line);
+    print_http_resource(resource);
+
+    exit(EXIT_FAILURE);
+}

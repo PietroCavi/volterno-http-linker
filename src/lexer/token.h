@@ -13,7 +13,7 @@ typedef enum{
         PUT_TAG, 
         DELETE_TAG, 
         PATCH_TAG,
-    FUNCTIONS_TAG,
+    // FUNCTIONS_TAG,
     FILE_TAG,
     DIR_TAG,
     ARROW_TAG,
@@ -38,7 +38,7 @@ extern const token post_tok;
 extern const token put_tok;
 extern const token delete_tok;
 extern const token patch_tok;
-extern const token functions_tok;
+// extern const token functions_tok;
 extern const token file_tok;
 extern const token dir_tok;
 extern const token arrow_tok;
