@@ -6,10 +6,28 @@
 #include "error_handling/error_handling.h"
 
 int main(int argc, char**argv){
-   
+
+    FILE* output_file = NULL;
     
+    int opt = getopt(argc,argv,"o:");
+    if(opt != -1){
+        if(opt == 'o'){ output_file = fopen(optarg,"w+"); }
+        else{ generic_error("Wrong flag, only one supported: [-o <path>]");}
+    }
+    else{
+        output_file = fopen("a.c","w+");
+    }
+    if(output_file == NULL){ generic_error("Could not open specified <output_file>"); }
+
+
+
     for(int i=1;i<argc;i++){
         
+        if(strcmp(argv[i],"-o")==0){
+            i++;
+            continue;
+        }
+
         FILE* config_file = fopen(argv[i],"r");
 
         if(config_file == NULL){

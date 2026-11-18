@@ -34,7 +34,8 @@ void error_at_line_tok(char* error_msg, long long unsigned line, token tok){
 
 void warning_at_line_resource(char* error_msg,long long unsigned line,http_resource resource){
     
-    fprintf(stderr,"\033[95mWARNING\033[0m: %s :: at line %llu\n",error_msg,line);
-    print_http_resource(resource);
+    fprintf(stderr,"\033[95mWARNING\033[0m: %s :: at line %llu :: %s: %s\n",error_msg,line,resource.dir == 0 ? "file":"dir",resource.path);
+    (void)resource;
+    // print_http_resource(resource);
 
 }

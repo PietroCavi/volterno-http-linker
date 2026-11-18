@@ -1,5 +1,7 @@
 #include "parser.h"
 
+long long unsigned parser_line;
+
 http_method parser_method = NOT_DEFINED;
 unsigned char parser_root = 0;
 unsigned char parser_base = 0;
@@ -18,7 +20,7 @@ void setup_parser(FILE* file){
     setup_lexer(file);
     parser_method = 0;
     parser_root = 0;
-    parser_base = 0;
+    // parser_base = 0;
 }
 
 void parse(){
@@ -57,21 +59,22 @@ void parse(){
 }
 
 void baseexpr(){
-    
+    parser_line = lexer_line;
+
     if(base.path != NULL){
-        error_at_line("<base> has already been defined",lexer_line);
+        error_at_line("<base> has already been defined",parser_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <base>",lexer_line);
+        error_at_line("Expected <:> after <base>",parser_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != IDENTIFIER_TAG){
-        error_at_line("Expected path for <base>",lexer_line);
+        error_at_line("Expected path for <base>",parser_line);
     }
     
     base.path = current_tok.string;
@@ -83,7 +86,7 @@ void baseexpr(){
     if(current_tok.tag == ARROW_TAG){
         current_tok = lex();
         if(current_tok.tag != IDENTIFIER_TAG){
-            error_at_line("Expected function name for <base>",lexer_line);
+            error_at_line("Expected function name for <base>",parser_line);
         }
         
         base.function_name = current_tok.string;
@@ -95,6 +98,7 @@ void baseexpr(){
 }
 
 void rootexpr(){
+    parser_line = lexer_line;
 
     if(current_root != NULL){
         free(current_root);
@@ -103,13 +107,13 @@ void rootexpr(){
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <root>",lexer_line);
+        error_at_line("Expected <:> after <root>",parser_line);
     }
 
     current_tok = lex();
 
     if(current_tok.tag != IDENTIFIER_TAG){
-        error_at_line("Expected path for <root>",lexer_line);
+        error_at_line("Expected path for <root>",parser_line);
     }
 
     current_root = current_tok.string;
@@ -121,10 +125,12 @@ void rootexpr(){
 }
 
 void methodexpr(){
+    parser_line = lexer_line;
+
     current_tok = lex();
 
     if(current_tok.tag != SEMICOLON_TAG){
-        error_at_line("Expected <:> after <method>",lexer_line);
+        error_at_line("Expected <:> after <method>",parser_line);
     }
 
     current_tok = lex();
@@ -146,7 +152,7 @@ void methodexpr(){
             parser_method = PATCH;
             break;
         default:
-            error_at_line_tok("Not a valid method (GET,POST,DELETE,PUT,PATCH)",lexer_line,current_tok);
+            error_at_line_tok("Not a valid method (GET,POST,DELETE,PUT,PATCH)",parser_line,current_tok);
             break;
     }
 
@@ -161,7 +167,7 @@ static void insert_resource(http_resource resource){
                 append_al(get_resources,resource); 
             }
             else{
-                warning_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",parser_line,resource);
             }
             break;
         case POST:
@@ -169,7 +175,7 @@ static void insert_resource(http_resource resource){
                 append_al(post_resources,resource); 
             }
             else{
-                warning_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",parser_line,resource);
             }
             break;
         case DELETE:
@@ -177,7 +183,7 @@ static void insert_resource(http_resource resource){
                 append_al(delete_resources,resource); 
             }
             else{
-                warning_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",parser_line,resource);
             }
             break;
         case PUT:
@@ -185,7 +191,7 @@ static void insert_resource(http_resource resource){
                 append_al(put_resources,resource); 
             }
             else{
-                warning_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",parser_line,resource);
             }
             break;
         case PATCH:
@@ -193,26 +199,27 @@ static void insert_resource(http_resource resource){
                 append_al(patch_resources,resource); 
             }
             else{
-                warning_at_line_resource("Duplicated resource",lexer_line,resource);
+                warning_at_line_resource("Duplicated resource",parser_line,resource);
             }
             break;
         default:
-            error_at_line("Invalid method (GET,POST,DELETE,PUT,PATCH) while parsing (Parser failure)",lexer_line);
+            error_at_line("Invalid method (GET,POST,DELETE,PUT,PATCH) while parsing (Parser failure)",parser_line);
             break;
     }
 }
 
 // TODO: check if file exists
 void fileexpr(){
+    parser_line = lexer_line;
 
     http_resource file_resource = {0};
 
-    if(!parser_root){error_at_line("No <root> was set for <file>",lexer_line);}
-    if(parser_method == NOT_DEFINED){error_at_line("No <method> was set for <file>",lexer_line);}
+    if(!parser_root){error_at_line("No <root> was set for <file>",parser_line);}
+    if(parser_method == NOT_DEFINED){error_at_line("No <method> was set for <file>",parser_line);}
     current_tok = lex();
-    if(current_tok.tag != SEMICOLON_TAG){error_at_line("Expected <:> after <file>",lexer_line);}
+    if(current_tok.tag != SEMICOLON_TAG){error_at_line("Expected <:> after <file>",parser_line);}
     current_tok = lex();
-    if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected path for <file>",lexer_line);}
+    if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected path for <file>",parser_line);}
    
     // +10 just to be sure, man...
     char* full_path = calloc(strlen(current_tok.string)+strlen(current_root)+10,sizeof(char));
@@ -225,7 +232,7 @@ void fileexpr(){
     current_tok = lex();
     if(current_tok.tag == ARROW_TAG){
         current_tok = lex();
-        if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected function name for <file>",lexer_line);}
+        if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected function name for <file>",parser_line);}
         
         file_resource.function_name = current_tok.string;
         
@@ -239,16 +246,17 @@ void fileexpr(){
 
 // TODO: exapand dirs into files before translating, and check if it exists
 void direxpr(){
-    
+    parser_line = lexer_line;
+
     http_resource dir_resource = {0};
     dir_resource.dir = 1;
     
-    if(!parser_root){error_at_line("No <root> was set for <dir>",lexer_line);}
-    if(parser_method == NOT_DEFINED){error_at_line("No <method> was set for <dir>",lexer_line);}
+    if(!parser_root){error_at_line("No <root> was set for <dir>",parser_line);}
+    if(parser_method == NOT_DEFINED){error_at_line("No <method> was set for <dir>",parser_line);}
     current_tok = lex();
-    if(current_tok.tag != SEMICOLON_TAG){error_at_line("Expected <:> after <dir>",lexer_line);}
+    if(current_tok.tag != SEMICOLON_TAG){error_at_line("Expected <:> after <dir>",parser_line);}
     current_tok = lex();
-    if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected path for <dir>",lexer_line);}
+    if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected path for <dir>",parser_line);}
     
     // +10 just to be sure, man...
     char* full_path = calloc(strlen(current_tok.string)+strlen(current_root)+10,sizeof(char));
@@ -261,7 +269,7 @@ void direxpr(){
     current_tok = lex();
     if(current_tok.tag == ARROW_TAG){
         current_tok = lex();
-        if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected function name for <dir>",lexer_line);}
+        if(current_tok.tag != IDENTIFIER_TAG){error_at_line("Expected function name for <dir>",parser_line);}
         
         dir_resource.function_name = current_tok.string;
         current_tok = lex();
