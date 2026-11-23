@@ -39,6 +39,6 @@ $(OUTPUT_DIR):
 	mkdir -p $(OUTPUT_DIR)
 
 clean:
-	rm -rf $(PROGRAM) $(OUTPUT_DIR)
+	rm -rf $(PROGRAM) $(OUTPUT_DIR) resources.c
 
 .PHONY: all clean debug

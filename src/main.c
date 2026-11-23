@@ -3,6 +3,7 @@
 #include <unistd.h>
 
 #include "parser/parser.h"
+#include "translator/translator.h"
 #include "error_handling/error_handling.h"
 
 int main(int argc, char**argv){
@@ -15,7 +16,7 @@ int main(int argc, char**argv){
         else{ generic_error("Wrong flag, only one supported: [-o <path>]");}
     }
     else{
-        output_file = fopen("a.c","w+");
+        output_file = fopen("resources.c","w+");
     }
     if(output_file == NULL){ generic_error("Could not open specified <output_file>"); }
 
@@ -48,6 +49,8 @@ int main(int argc, char**argv){
         generic_error("<base> was not specified");
     }
     
+    translate(output_file);
+
     // debug section
 
     // printf("BASE:\n");
