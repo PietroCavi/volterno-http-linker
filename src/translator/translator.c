@@ -1,8 +1,10 @@
 #include "translator.h"
 
 void translate(FILE* output_file){
-   
-    size_t get_resources_len    = 0;
+    
+    // starts from 1 because there is always a base
+    size_t get_resources_len    = 1;
+
     size_t post_resources_len   = 0;
     size_t delete_resources_len = 0;
     size_t put_resources_len    = 0;
@@ -37,11 +39,6 @@ void translate(FILE* output_file){
 
     fprintf(output_file,"#include \"resources.h\"\n\n");
     
-    fprintf(output_file,"http_resource base = {\n \
-                     .server_path = \"/%s\",\n \
-                     .real_path   = \"./%s\",\n \
-                     .function    = %s\n \
-                    };\n",base.path,base.path,base.function_name == NULL ? "NULL" : base.function_name);
 
     
     fprintf(output_file,"\n");
@@ -62,6 +59,11 @@ void translate(FILE* output_file){
     
     
     fprintf(output_file,"http_resource get_resources[%lu] = {\n", get_resources_len);
+    fprintf(output_file,"    {\n \
+    .server_path = \"/\",\n \
+    .real_path   = \"./%s\",\n \
+    .function    = %s\n \
+   },\n",base.path,base.function_name == NULL ? "NULL" : base.function_name);
     for(size_t i=0;i<get_resources.size;i++){
         if(get_resources.items[i].dir){ 
             continue;
